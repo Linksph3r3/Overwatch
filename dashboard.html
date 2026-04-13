@@ -17,6 +17,11 @@ async function loadAnalytics() {
   document.getElementById("stats").innerHTML = `
     <p>Total Visitors: ${data.totalVisitors}</p>
     <p>Today's Visitors: ${data.todayVisitors}</p>
+
+    <h3>Insights:</h3>
+    <ul>
+      ${data.insights.map(i => `<li>${i}</li>`).join("")}
+    </ul>
   `;
 }
 
