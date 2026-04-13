@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Analytics Dashboard</title>
+</head>
+<body>
+
+<h1>Analytics</h1>
+
+<div id="stats"></div>
+
+<script>
+async function loadAnalytics() {
+  const res = await fetch("http://localhost:3000/analytics");
+  const data = await res.json();
+
+  document.getElementById("stats").innerHTML = `
+    <p>Total Visitors: ${data.totalVisitors}</p>
+    <p>Today's Visitors: ${data.todayVisitors}</p>
+  `;
+}
+
+loadAnalytics();
+</script>
+
+</body>
+</html>
