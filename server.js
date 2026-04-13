@@ -40,10 +40,59 @@ app.get("/analytics", (req, res) => {
     }
   });
 
+  app.get("/analytics", (req, res) => {
+  const data = readDB();
+
+  const visitors = new Set();
+  const today = new Date().toDateString();
+
+  let todayVisitors = 0;
+
+  data.forEach(event => {
+    visitors.add(event.visitorId);
+
+    if (new Date(event.timestamp).toDateString() === today) {
+      todayVisitors++;
+    }
+  });
+
+  // 👉 Generate insights here
+  const insights = generateInsights(data);
+
+  // 👉 Send everything back
   res.json({
     totalVisitors: visitors.size,
-    todayVisitors
+    todayVisitors,
+    insights
   });
 });
+});
+
+function generateInsights(data) {
+  const clicks = data.filter(e => e.type === "click");
+
+  const clickMap = {};
+
+  clicks.forEach(c => {
+    const key = c.text || c.tag;
+    clickMap[key] = (clickMap[key] || 0) + 1;
+  });
+
+  const sorted = Object.entries(clickMap).sort((a,b) => b[1]-a[1]);
+
+  const topClicked = sorted[0];
+
+  const insights = [];
+
+  if (topClicked) {
+    insights.push(`Users are mostly clicking "${topClicked[0]}". Consider placing key actions near it.`);
+  }
+
+  if (clicks.length < 10) {
+    insights.push("Low interaction detected. Improve call-to-action visibility.");
+  }
+
+  return insights;
+}
 
 app.listen(3000, () => console.log("Server running on port 3000"));
